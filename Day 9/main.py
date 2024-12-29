@@ -34,9 +34,33 @@ def part_1(data):
     print(get_checksum(disk_blocks))
 
 
+def swap_spaces(left, right, block_size, disk_blocks):
+    for i in range(block_size):
+        disk_blocks[left+i], disk_blocks[right+i] = disk_blocks[right+i], '.'
+    
+
 def sort_without_fragmentation(disk_blocks):
-    # Get block sizes in order
-    print()
+    left_pointer = 0
+    right_pointer = len(disk_blocks) - 1
+    current_value = None
+
+    while right_pointer > 0:
+        left_pointer = 0
+        while right_pointer >= 0 and disk_blocks[right_pointer] == '.':
+            right_pointer -= 1
+        
+        block_size = 0
+        current_value = disk_blocks[right_pointer]
+        while right_pointer >= 0 and disk_blocks[right_pointer] == current_value:
+            block_size += 1
+            right_pointer -= 1
+        while left_pointer < right_pointer+1:
+            if all(disk_blocks[left_pointer+i] == '.' for i in range(block_size)):
+                swap_spaces(left_pointer, right_pointer+1, block_size, disk_blocks)
+                break
+            else:
+                left_pointer += 1
+
 
 def part_2(data):
     disk_blocks = get_disk_blocks(data)
